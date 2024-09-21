@@ -564,6 +564,232 @@ max long_w=164.87604770
 
 select Format(Round(ABS(min(lat_n)- max(lat_n) + min(long_w)- max(long_w)),4),".####")   from station;
 
+-----------------------------------------------------------------------------------------------------------
+
+20/09/2024 
+
+SQL - Basic Join 
+
+1) 
+
+Given the CITY and COUNTRY tables, query the sum of the populations of all cities where the CONTINENT is 'Asia'. 
+
+ Sol: 
+
+ 
+
+SELECT SUM(ci.population) from city as ci 
+
+JOIN country as co ON ci.CountryCode = co.Code 
+
+where continent = 'Asia';  
+
+  
+
+2) 
+
+  
+
+Given the CITY and COUNTRY tables, query the names of all cities where the CONTINENT is 'Africa'. 
+
+ Sol: 
+
+ 
+
+SELECT City.Name  
+
+FROM City, Country  
+
+WHERE City.CountryCode = Country.Code AND Continent = 'Africa' ; 
+
+  
+
+3) 
+
+Given the CITY and COUNTRY tables, query the names of all cities where the CONTINENT is 'Africa'. 
+
+ Sol: 
+
+ 
+
+  
+
+SELECT ci.NAME from city as ci 
+
+JOIN country as co ON ci.CountryCode = co.Code 
+
+WHERE CONTINENT  = 'Africa'; 
+
+  
+
+  
+
+4) Given the CITY and COUNTRY tables, query the names of all the continents (COUNTRY.Continent) and their respective average city populations (CITY.Population) rounded down to the nearest integer.  
+
+Sol:  
+
+ 
+
+Select co.continent , Avg(ci.population) from city as ci 
+
+JOIN country as co ON ci.CountryCode=co.Code 
+
+group by co.continent; 
+
+ 
+
+5) You are given two tables: Students and Grades. Students contains three columns ID, Name and Marks. 
+
+Sol: 
+
+ 
+
+select case when g.grade<8 then null 
+
+else s.name 
+
+end as name, g.grade, s.marks 
+
+from students as s 
+
+JOIN grades as g ON s.marks between g.min_mark and g.max_mark 
+
+order by g.grade desc,s.name asc; 
+
+ 
+
+  
+
+  
+
+6) 
+
+Julia just finished conducting a coding contest, and she needs your help assembling the leaderboard! Write a query to print the respective hacker_id and name of hackers who achieved full scores for more than one challenge. Order your output in descending order by the total number of challenges in which the hacker earned a full score. If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id. 
+
+ 
+
+Input Format 
+
+The following tables contain contest data: 
+
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker.  
+
+Difficulty: The difficult_level is the level of difficulty of the challenge, and score is the score of the challenge for the difficulty level.  
+
+Challenges: The challenge_id is the id of the challenge, the hacker_id is the id of the hacker who created the challenge, and difficulty_level is the level of difficulty of the challenge.  
+
+Submissions: The submission_id is the id of the submission, hacker_id is the id of the hacker who made the submission, challenge_id is the id of the challenge that the submission belongs to, and score is the score of the submission.  
+
+Sol: 
+
+ 
+
+SELECT h.hacker_id , h.name 
+
+FROM submissions s 
+
+join hackers h on h.hacker_id = s.hacker_id 
+
+join challenges c on c.challenge_id = s.challenge_id 
+
+join difficulty d on d.difficulty_level = c.difficulty_level 
+
+where s.score = d.score 
+
+and c.difficulty_level = d.difficulty_level 
+
+group by h.hacker_id ,h.name 
+
+having COUNT(s.submission_id) > 1 
+
+order by COUNT(s.submission_id) desc, h.hacker_id asc; 
+
+ 
+
+7) 
+
+Query the list of CITY names from STATION which have vowels (i.e., a, e, i, o, and u) as both their first and last characters. Your result cannot contain duplicates. 
+
+Input Format 
+
+The STATION table is described as follows: 
+
+ 
+
+where LAT_N is the northern latitude and LONG_W is the western longitude. 
+
+ 
+
+Sol: 
+
+ 
+
+ 
+
+select distinct city from station  
+
+where city like '[aeiou]%[aeiou]'; 
+
+ 
+
+8) 
+
+Query the list of CITY names from STATION that do not start with vowels. Your result cannot contain duplicates. 
+
+Sol: 
+
+ 
+
+select distinct city from station   
+
+where left(city,1) not in ('a', 'e', 'i', 'o', 'u'); 
+
+ 
+
+9) Query the list of CITY names from STATION that do not end with vowels. Your result cannot contain duplicates. 
+
+Sol: 
+
+ 
+
+select distinct city from station  
+
+ where right(city,1) not in ('a', 'e', 'i', 'o', 'u'); 
+
+ 
+
+10) 
+
+Query the list of CITY names from STATION that either do not start with vowels or do not end with vowels. Your result cannot contain duplicates. 
+
+Input Format 
+
+The STATION table is described as follows: 
+
+ 
+
+ 
+
+Sol: 
+
+ 
+
+select distinct city from station   
+
+where  
+
+left(city,1) not in ('a', 'e', 'i', 'o', 'u') or 
+
+right(city,1) not in ('a', 'e', 'i', 'o', 'u'); 
+
+ 
+
+ 
+
+ 
+
+ 
+
 
 
 Consider  and  to be two points on a 2D plane where  are the respective minimum and maximum values of Northern Latitude (LAT_N) and  are the respective minimum and maximum values of Western Longitude (LONG_W) in STATION.
