@@ -799,3 +799,670 @@ Query the Euclidean Distance between points  and  and format your answer to disp
 
 select Format(ROUND(SQRT(SQUARE(max(lat_n)-min(lat_n))
 +SQUARE(max(long_w)-min(long_w))),4),".####") from station;
+
+20/09/2024  
+
+SQL -   Join 
+
+1) 
+
+Given the CITY and COUNTRY tables, query the sum of the populations of all cities where the CONTINENT is 'Asia'. 
+
+ Sol: 
+
+ 
+
+SELECT SUM(ci.population) from city as ci 
+
+JOIN country as co ON ci.CountryCode = co.Code 
+
+where continent = 'Asia';  
+
+  
+
+2) 
+
+  
+
+Given the CITY and COUNTRY tables, query the names of all cities where the CONTINENT is 'Africa'. 
+
+ Sol: 
+
+ 
+
+SELECT City.Name  
+
+FROM City, Country  
+
+WHERE City.CountryCode = Country.Code AND Continent = 'Africa' ; 
+
+  
+
+3) 
+
+Given the CITY and COUNTRY tables, query the names of all cities where the CONTINENT is 'Africa'. 
+
+ Sol: 
+
+ 
+
+  
+
+SELECT ci.NAME from city as ci 
+
+JOIN country as co ON ci.CountryCode = co.Code 
+
+WHERE CONTINENT  = 'Africa'; 
+
+  
+
+  
+
+4) Given the CITY and COUNTRY tables, query the names of all the continents (COUNTRY.Continent) and their respective average city populations (CITY.Population) rounded down to the nearest integer.  
+
+Sol:  
+
+ 
+
+Select co.continent , Avg(ci.population) from city as ci 
+
+JOIN country as co ON ci.CountryCode=co.Code 
+
+group by co.continent; 
+
+ 
+
+5) You are given two tables: Students and Grades. Students contains three columns ID, Name and Marks. 
+
+Sol: 
+
+ 
+
+select case when g.grade<8 then null 
+
+else s.name 
+
+end as name, g.grade, s.marks 
+
+from students as s 
+
+JOIN grades as g ON s.marks between g.min_mark and g.max_mark 
+
+order by g.grade desc,s.name asc; 
+
+ 
+
+  
+
+  
+
+6) 
+
+Julia just finished conducting a coding contest, and she needs your help assembling the leaderboard! Write a query to print the respective hacker_id and name of hackers who achieved full scores for more than one challenge. Order your output in descending order by the total number of challenges in which the hacker earned a full score. If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id. 
+
+ 
+
+Input Format 
+
+The following tables contain contest data: 
+
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker.  
+
+Difficulty: The difficult_level is the level of difficulty of the challenge, and score is the score of the challenge for the difficulty level.  
+
+Challenges: The challenge_id is the id of the challenge, the hacker_id is the id of the hacker who created the challenge, and difficulty_level is the level of difficulty of the challenge.  
+
+Submissions: The submission_id is the id of the submission, hacker_id is the id of the hacker who made the submission, challenge_id is the id of the challenge that the submission belongs to, and score is the score of the submission.  
+
+Sol: 
+
+ 
+
+SELECT h.hacker_id , h.name 
+
+FROM submissions s 
+
+join hackers h on h.hacker_id = s.hacker_id 
+
+join challenges c on c.challenge_id = s.challenge_id 
+
+join difficulty d on d.difficulty_level = c.difficulty_level 
+
+where s.score = d.score 
+
+and c.difficulty_level = d.difficulty_level 
+
+group by h.hacker_id ,h.name 
+
+having COUNT(s.submission_id) > 1 
+
+order by COUNT(s.submission_id) desc, h.hacker_id asc; 
+
+ 
+
+7) 
+
+Query the list of CITY names from STATION which have vowels (i.e., a, e, i, o, and u) as both their first and last characters. Your result cannot contain duplicates. 
+
+Input Format 
+
+The STATION table is described as follows: 
+
+ 
+
+where LAT_N is the northern latitude and LONG_W is the western longitude. 
+
+ 
+
+Sol: 
+
+ 
+
+ 
+
+select distinct city from station  
+
+where city like '[aeiou]%[aeiou]'; 
+
+ 
+
+8) 
+
+Query the list of CITY names from STATION that do not start with vowels. Your result cannot contain duplicates. 
+
+Sol: 
+
+ 
+
+select distinct city from station   
+
+where left(city,1) not in ('a', 'e', 'i', 'o', 'u'); 
+
+ 
+
+9) Query the list of CITY names from STATION that do not end with vowels. Your result cannot contain duplicates. 
+
+Sol: 
+
+ 
+
+select distinct city from station  
+
+ where right(city,1) not in ('a', 'e', 'i', 'o', 'u'); 
+
+ 
+
+10) 
+
+Query the list of CITY names from STATION that either do not start with vowels or do not end with vowels. Your result cannot contain duplicates. 
+
+Input Format 
+
+The STATION table is described as follows: 
+
+ 
+
+ 
+
+Sol: 
+
+ 
+
+select distinct city from station   
+
+where  
+
+left(city,1) not in ('a', 'e', 'i', 'o', 'u') or 
+
+right(city,1) not in ('a', 'e', 'i', 'o', 'u'); 
+
+ 
+
+11) 
+
+Julia asked her students to create some coding challenges. Write a query to print the hacker_id, name, and the total number of challenges created by each student. Sort your results by the total number of challenges in descending order. If more than one student created the same number of challenges, then sort the result by hacker_id. If more than one student created the same number of challenges and the count is less than the maximum number of challenges created, then exclude those students from the result. 
+
+Input Format 
+
+The following tables contain challenge data: 
+
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker.  
+
+Challenges: The challenge_id is the id of the challenge, and hacker_id is the id of the student who created the challenge.  
+
+ 
+
+ 
+
+Sol:  
+
+ 
+
+SELECT c.hacker_id, h.name, count(c.challenge_id) AS tnc  
+
+--total no. challenges 
+
+FROM Hackers AS h JOIN Challenges AS c ON h.hacker_id = c.hacker_id 
+
+GROUP BY c.hacker_id, h.name  
+
+HAVING tnc = (SELECT count(c1.challenge_id) FROM Challenges AS c1 GROUP BY c1.hacker_id  
+
+              ORDER BY count(*) desc limit 1) or 
+
+tnc NOT IN (SELECT count(c2.challenge_id) FROM Challenges AS c2 GROUP BY c2.hacker_id  
+
+            HAVING c2.hacker_id <> c.hacker_id) 
+
+ORDER BY tnc DESC, c.hacker_id; 
+
+12) 
+
+Query the list of CITY names from STATION that do not start with vowels and do not end with vowels. Your result cannot contain duplicates. 
+
+Input Format 
+
+The STATION table is described as follows: 
+
+ 
+
+where LAT_N is the northern latitude and LONG_W is the western longitude 
+
+ 
+
+Sol: 
+
+SELECT DISTINCT CITY FROM STATION 
+
+WHERE CITY NOT LIKE '[A,E,I,O,U]%' AND CITY NOT LIKE '%[A,E,I,O,U]'; 
+
+ 
+
+ 
+
+13) 
+
+Query the Name of any student in STUDENTS who scored higher than  Marks. Order your output by the last three characters of each name. If two or more students both have names ending in the same last three characters (i.e.: Bobby, Robby, etc.), secondary sort them by ascending ID. 
+
+Input Format 
+
+The STUDENTS table is described as follows:  The Name column only contains uppercase (A-Z) and lowercase (a-z) letters 
+
+ 
+
+ 
+
+ 
+
+Sol:  
+
+SELECT name FROM STUDENTS 
+
+WHERE MARKS>75 
+
+ORDER BY RIGHT(NAME,3),ID; 
+
+ 
+
+14) Write a query that prints a list of employee names (i.e.: the name attribute) for employees in Employee having a salary greater than  per month who have been employees for less than  months. Sort your result by ascending employee_id. 
+
+Input Format 
+
+The Employee table containing employee data for a company is described as follows: 
+
+ 
+
+where employee_id is an employee's ID number, name is their name, months is the total number of months they've been working for the company, and salary is the their monthly salary 
+
+ 
+
+ 
+
+ 
+
+Sol: 
+
+SELECT NAME FROM EMPLOYEE 
+
+WHERE SALARY>2000 AND MONTHS<10 
+
+ORDER BY EMPLOYEE_ID; 
+
+ 
+
+ 
+
+15) 
+
+Generate the following two result sets: 
+
+Query an alphabetically ordered list of all names in OCCUPATIONS, immediately followed by the first letter of each profession as a parenthetical (i.e.: enclosed in parentheses). For example: AnActorName(A), ADoctorName(D), AProfessorName(P), and ASingerName(S). 
+
+Query the number of ocurrences of each occupation in OCCUPATIONS. Sort the occurrences in ascending order, and output them in the following format: 
+ 
+
+There are a total of [occupation_count] [occupation]s. 
+ 
+
+where [occupation_count] is the number of occurrences of an occupation in OCCUPATIONS and [occupation] is the lowercase occupation name. If more than one Occupation has the same [occupation_count], they should be ordered alphabetically. 
+
+Note: There will be at least two entries in the table for each type of occupation. 
+
+Input Format 
+
+The OCCUPATIONS table is described as follows:  Occupation will only contain one of the following values: Doctor, Professor, Singer or Actor 
+
+ 
+
+ 
+
+ Sol: 
+
+SELECT CONCAT(NAME, '(' , LEFT(OCCUPATION, 1), ')') 
+
+FROM OCCUPATIONS 
+
+UNION 
+
+SELECT CONCAT('There are a total of ', ' ', COUNT(OCCUPATION), ' ', LOWER(OCCUPATION), 's.') 
+
+FROM OCCUPATIONS 
+
+GROUP BY OCCUPATION; 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+23/09/2024 
+
+ 
+
+ 
+
+ 
+
+ 
+
+16) Write a query identifying the type of each record in the TRIANGLES table using its three side lengths. Output one of the following statements for each record in the table: 
+
+Equilateral: It's a triangle with  sides of equal length. 
+
+Isosceles: It's a triangle with  sides of equal length. 
+
+Scalene: It's a triangle with  sides of differing lengths. 
+
+Not A Triangle: The given values of A, B, and C don't form a triangle. 
+
+Input Format 
+
+The TRIANGLES table is described as follows: 
+
+ 
+
+Each row in the table denotes the lengths of each of a triangle's three sides 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Sol: 
+
+select  
+
+case  
+
+when A+B <= C or B+C <= A or C+A <= B then  'Not A Triangle' 
+
+when A=B AND B=C  then 'Equilateral' 
+
+when A=B or B=C or C=A then 'Isosceles' 
+
+when A<>B AND B<>C  then 'Scalene' 
+
+end as Triangleforms 
+
+from TRIANGLES; 
+
+ 
+
+ 
+
+17) Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically and displayed underneath its corresponding Occupation. The output column headers should be Doctor, Professor, Singer, and Actor, respectively. 
+
+Note: Print NULL when there are no more names corresponding to an occupation. 
+
+Input Format 
+
+The OCCUPATIONS table is described as follows: 
+
+ 
+
+Occupation will only contain one of the following values: Doctor, Professor, Singer or Actor. 
+
+ 
+
+ 
+
+ 
+
+Sol: 
+
+ 
+
+ 
+
+ 
+
+18) Query a count of the number of cities in CITY having a Population larger than 1,00,000. 
+
+Input Format 
+
+The CITY table is described as follows:  
+
+ 
+
+Sol: 
+
+SELECT COUNT(*) FROM CITY 
+
+WHERE POPULATION>100000; 
+
+ 
+
+ 
+
+19) 
+
+Query the total population of all cities in CITY where District is California. 
+
+Input Format 
+
+The CITY table is described as follows:  
+
+ 
+
+ 
+
+Sol: 
+
+ 
+
+ SELECT SUM(POPULATION) FROM CITY 
+
+WHERE DISTRICT = 'California'; 
+
+ 
+
+ 
+
+ 
+
+20) 
+
+Query the average population of all cities in CITY where District is California. 
+
+Input Format 
+
+The CITY table is described as follows:  
+
+ 
+
+ 
+
+ 
+
+Sol: 
+
+SELECT AVG(POPULATION) FROM CITY 
+
+WHERE District='California'; 
+
+ 
+
+20)  
+
+Query the average population for all cities in CITY, rounded down to the nearest integer. 
+
+Input Format 
+
+The CITY table is described as follows:  
+
+ 
+
+  
+
+  
+
+  
+
+  
+
+  
+
+Sol: 
+
+SELECT ceiling(AVG(POPULATION)) FROM CITY ; 
+
+ 
+
+21) You did such a great job helping Julia with her last coding contest challenge that she wants you to work on this one, too! 
+
+The total score of a hacker is the sum of their maximum scores for all of the challenges. Write a query to print the hacker_id, name, and total score of the hackers ordered by the descending score. If more than one hacker achieved the same total score, then sort the result by ascending hacker_id. Exclude all hackers with a total score of  from your result. 
+
+Input Format 
+
+The following tables contain contest data: 
+
+Hackers: The hacker_id is the id of the hacker, and name is the name of the hacker.  
+
+Submissions: The submission_id is the id of the submission, hacker_id is the id of the hacker who made the submission, challenge_id is the id of the challenge for which the submission belongs to, and score is the score of the submission.  
+
+Sample 
+
+  
+
+ Sol: 
+select h.hacker_id,h.name,sum(max_scores.max_score) as total_score 
+
+from hackers h 
+
+JOIN (select h.hacker_id,s.challenege_id,max(s.score) as max.score 
+
+from submissions s 
+
+      group by h.hacker_id,h.name ) as max_score 
+
+      from submissions s 
+
+ON h.hacker_id=max.hacker_id 
+
+group by h.hacker_id,h.name    
+
+having sum(s.max_score)>0 
+
+order by toatal_score desc ,hacker_id ;-- failed attempt 
+
+ANSWER: 
+
+SELECT  
+
+    h.hacker_id,  
+
+    h.name,  
+
+    SUM(max_scores.max_score) AS total_score 
+
+FROM  
+
+    hackers h 
+
+JOIN  
+
+    (SELECT  
+
+        hacker_id,  
+
+        challenge_id,  
+
+        MAX(score) AS max_score 
+
+     FROM  
+
+        submissions 
+
+     GROUP BY  
+
+        hacker_id, challenge_id 
+
+    ) max_scores 
+
+ON  
+
+    h.hacker_id = max_scores.hacker_id 
+
+GROUP BY  
+
+    h.hacker_id, h.name 
+
+HAVING  
+
+    SUM(max_scores.max_score) > 0  -- Exclude hackers with total score of 0 
+
+ORDER BY  
+
+    total_score DESC,  
+
+    h.hacker_id ASC;
